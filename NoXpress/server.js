@@ -29,15 +29,40 @@ app.use((req, res, next) => {
   }
 });
 
+//middleware: query string parser
+app.use((req,res,next) => {
+  const urlParts = req.url.split('?');
+  const queryString = urlParts[1];
+  req.query = {};
+  if (queryString) {
+    queryString.split('&').forEach(pair => {
+      const [key, value] = pair.split('=');
+      req.query[decodeURIComponent(key)] = decodeURIComponent(value || '');
+    });
+  }
+  next();
+});
+
 app.get('/hello', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({ message: 'Hello from GET /hello' }));
 });
 
+app.get('/users/:id', (req, res) => {
+  const userId = req.params.id;
+  res.statusCode = 200;
+  res.end(JSON.stringify({ userId }));
+});
+
 app.get('/about', (req, res) => {
   res.statusCode = 200;
   res.end('This is the about page');
+});
+
+app.get("/search", (req, res) => {
+  console.log(req.query); // { term: 'books', page: '2' }
+  res.end("Searching for " + req.query.term + " on page " + req.query.page);
 });
 
 app.get('/test');
