@@ -14,8 +14,6 @@ Node.js gives us a built-in module called http that allows us to:
  - PATCH: Update part of data
  - OPTIONS: Get info on what methods are allowed
 
-
-
 ## When you visit http://localhost:3000/hello, here's what happens:
 
  - Browser makes an HTTP request to your server

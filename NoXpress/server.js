@@ -43,6 +43,17 @@ app.use((req,res,next) => {
   next();
 });
 
+// Async route that throws
+app.get("/error", async (req, res) => {
+  throw new Error("Something went wrong!");
+});
+
+app.use((err, req, res, next) => {
+  res.statusCode = 500;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify({ error: err.message }));
+});
+
 app.get('/hello', (req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
