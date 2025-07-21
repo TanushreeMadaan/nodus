@@ -15,21 +15,44 @@ router.get("/protected", requireAuth, (req, res) => {
 });
 
 router.post("/refresh", (req, res) => {
-  const  refreshToken  = req.body.refreshToken;
-  //console.log("Refresh Token:", refreshToken);
-  if (!refreshToken)
+  const oldRefreshToken = req.cookies.refreshToken;
+
+  if (!oldRefreshToken) {
     return res.status(401).json({ message: "No refresh token" });
+  }
 
   try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
-    const accessToken = jwt.sign(
+    const decoded = jwt.verify(oldRefreshToken, process.env.JWT_SECRET);
+
+    // Rotate refresh token
+    const newRefreshToken = jwt.sign(
+      { id: decoded.id, email: decoded.email },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" }
+    );
+
+    const newAccessToken = jwt.sign(
       { id: decoded.id, email: decoded.email },
       process.env.JWT_SECRET,
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" }
     );
-    res.json({ accessToken });
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      sameSite: "Strict",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.json({ message: "Tokens rotated" });
   } catch (err) {
-    console.error("JWT verification failed:", err.message);
     return res.status(403).json({ message: "Invalid refresh token" });
   }
 });

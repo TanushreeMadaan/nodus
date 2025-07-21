@@ -15,8 +15,13 @@
  - They are commonly used for authentication and authorization in web applications.
 
 ## Logout w token
-
  - tokens stored client side and expire after a certain period.
  - user shouldnt have to login again after token refresh
  - allow logout by invalidating refresh token
+
+{ **Token Rotation** - prevent single point of failure incase of unauth access; /refresh also generates new refresh token along with access token }
+
+
+
+
 

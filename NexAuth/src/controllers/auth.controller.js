@@ -63,6 +63,12 @@ const loginUser = async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
+   res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    sameSite: "Strict",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 15 * 60 * 1000, // 15 mins
+  });
   // Send refresh token in httpOnly cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -71,7 +77,7 @@ const loginUser = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  res.json({ accessToken }); // client will store accessToken (e.g., in memory or localStorage)
+  res.json({  message: "Login successful"  }); // client will store accessToken (e.g., in memory or localStorage)
 };
 module.exports = {
   signup,
