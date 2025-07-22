@@ -3,6 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const testRoutes = require('./routes/test.route');
 const authRoutes = require('./routes/auth.route'); 
+const { generalLimiter } = require('./middlewares/rateLimiter');
 
 const app = express();
 
@@ -11,6 +12,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(generalLimiter);
 
 // Routes
 app.use('/api', testRoutes);

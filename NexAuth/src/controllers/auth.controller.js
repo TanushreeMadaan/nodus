@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const signup = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role = 'user' } = req.body;
 
   try {
     // 1. Check if user already exists
@@ -22,8 +22,8 @@ const signup = async (req, res) => {
 
     // 3. Insert into DB
     const newUser = await pool.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email, created_at",
-      [username, email, hashedPassword]
+      "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4);",
+      [username, email, hashedPassword, role]
     );
 
     res.status(201).json({
@@ -37,7 +37,7 @@ const signup = async (req, res) => {
 };
 
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
   });
 };

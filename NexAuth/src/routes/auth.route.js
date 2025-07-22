@@ -1,17 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const { signup, loginUser } = require("../controllers/auth.controller");
-const requireAuth = require("../middlewares/auth.middleware");
+const {requireAuth, authorizeRole} = require("../middlewares/auth.middleware");
 const jwt = require("jsonwebtoken");
+const  { loginLimiter }  = require("../middlewares/rateLimiter"); 
 
 router.post("/signup", signup);
-router.post("/login", loginUser);
+router.post("/login", loginLimiter, loginUser);
 
 router.get("/protected", requireAuth, (req, res) => {
-  res.json({
-    message: "✅ You are authorized!",
-    user: req.user,
-  });
+  res.json({message: `Hello, ${req.user.email}`});
+});
+
+router.get('/admin-only', requireAuth, authorizeRole('admin'), (req, res) => {
+  res.json({ message: 'Welcome Admin!' });
+});
+
+router.get('/user-only', requireAuth, authorizeRole('user'), (req, res) => {
+  res.json({ message: 'Welcome User!' });
 });
 
 router.post("/refresh", (req, res) => {
@@ -57,13 +63,11 @@ router.post("/refresh", (req, res) => {
   }
 });
 
-router.post("/logout", (req, res) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    sameSite: "Strict",
-    secure: process.env.NODE_ENV === "production",
-  });
-  res.json({ message: "Logged out successfully" });
+router.post('/logout', (req, res) => {
+  res
+    .clearCookie('accessToken', { httpOnly: true, sameSite: 'Strict', secure: true })
+    .clearCookie('refreshToken', { httpOnly: true, sameSite: 'Strict', secure: true })
+    .json({ message: 'Logged out successfully' });
 });
 
 module.exports = router;

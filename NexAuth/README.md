@@ -21,7 +21,8 @@
 
 { **Token Rotation** - prevent single point of failure incase of unauth access; /refresh also generates new refresh token along with access token }
 
-
+## Rate-Limiting
+ - Limiting number of requests based on multiple conditions
 
 
 
