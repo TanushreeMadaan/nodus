@@ -1,0 +1,89 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.join-room {
+  margin-bottom: 20px;
+}
+
+.room-tabs {
+  display: flex;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.room-tab {
+  padding: 8px 15px;
+  margin-right: 5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  background-color: #eee;
+}
+
+.room-tab.active {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-bottom: 1px solid white;
+  font-weight: bold;
+}
+
+.rooms-messages-container {
+  border: 1px solid #ccc;
+  height: 300px;
+  overflow-y: auto;
+  background-color: white;
+  padding: 10px;
+  border-radius: 0 5px 5px 5px;
+  margin-bottom: 10px;
+}
+
+.room-messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none;
+}
+
+.room-messages.active {
+  display: block;
+}
+
+.room-messages li {
+  margin-bottom: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background-color: #f2f2f2;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+}
+
+input#input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #3178c6;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #265a9f;
+}

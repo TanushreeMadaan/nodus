@@ -9,16 +9,25 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+    console.log('A user connected:', socket.id);
 
-  socket.on('chat message', (msg) => {
-    console.log('Message received:', msg);
-    // Broadcast message to all connected clients
-    io.emit('chat message', msg);
+  // Listen for room join
+  socket.on('joinRoom', (room) => {
+    socket.join(room);
+    console.log(`User ${socket.id} joined room: ${room}`);
   });
 
+  // Handle message sending to a room
+  socket.on('chatMessage', ({ room, message }) => {
+  io.to(room).emit('chatMessage', {
+    room,
+    sender: socket.id,
+    message,
+  });
+});
+
   socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+    console.log('User disconnected:', socket.id);
   });
 });
 
